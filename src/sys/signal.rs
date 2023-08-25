@@ -1,6 +1,3 @@
-use lazy_static::lazy_static;
-use nix::sys::signal::{pthread_sigmask, sigaction};
-use nix::sys::signal::{SaFlags, SigAction, SigHandler, SigSet, SigmaskHow, Signal};
 use std::collections::HashMap;
 use std::sync::atomic::{AtomicUsize, Ordering};
 use std::sync::mpsc::{channel, Receiver, Sender};
@@ -8,10 +5,12 @@ use std::sync::Mutex;
 use std::sync::Once;
 use std::thread;
 
-lazy_static! {
-    static ref NOTIFIER_COUNTER: AtomicUsize = AtomicUsize::new(1);
-    static ref NOTIFIER: Mutex<HashMap<usize, Sender<()>>> = Mutex::new(HashMap::new());
-}
+use nix::sys::signal::{pthread_sigmask, sigaction};
+use nix::sys::signal::{SaFlags, SigAction, SigHandler, SigSet, SigmaskHow, Signal};
+use once_cell::sync::Lazy;
+
+static NOTIFIER_COUNTER: AtomicUsize = AtomicUsize::new(1);
+static NOTIFIER: Lazy<Mutex<HashMap<usize, Sender<()>>>> = Lazy::new(|| Mutex::new(HashMap::new()));
 
 static ONCE: Once = Once::new();
 
