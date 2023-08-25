@@ -70,11 +70,9 @@ pub struct TermOptions {
     min_height: TermHeight,
     height: TermHeight,
     clear_on_exit: bool,
-    clear_on_start: bool,
     mouse_enabled: bool,
     raw_mouse: bool,
     hold: bool, // to start term or not on creation
-    disable_alternate_screen: bool,
 }
 
 impl Default for TermOptions {
@@ -84,11 +82,9 @@ impl Default for TermOptions {
             min_height: TermHeight::Fixed(3),
             height: TermHeight::Percent(100),
             clear_on_exit: true,
-            clear_on_start: true,
             mouse_enabled: false,
             raw_mouse: false,
             hold: false,
-            disable_alternate_screen: false,
         }
     }
 }
@@ -112,10 +108,6 @@ impl TermOptions {
         self.clear_on_exit = clear;
         self
     }
-    pub fn clear_on_start(mut self, clear: bool) -> Self {
-        self.clear_on_start = clear;
-        self
-    }
     pub fn mouse_enabled(mut self, enabled: bool) -> Self {
         self.mouse_enabled = enabled;
         self
@@ -126,10 +118,6 @@ impl TermOptions {
     }
     pub fn hold(mut self, hold: bool) -> Self {
         self.hold = hold;
-        self
-    }
-    pub fn disable_alternate_screen(mut self, disable_alternate_screen: bool) -> Self {
-        self.disable_alternate_screen = disable_alternate_screen;
         self
     }
 }
@@ -580,10 +568,8 @@ struct TermLock {
     // keep bottom intact when resize?
     bottom_intact: bool,
     clear_on_exit: bool,
-    clear_on_start: bool,
     mouse_enabled: bool,
     alternate_screen: bool,
-    disable_alternate_screen: bool,
     cursor_row: usize,
     screen_height: usize,
     screen_width: usize,
@@ -599,14 +585,12 @@ impl Default for TermLock {
             min_height: TermHeight::Fixed(3),
             bottom_intact: false,
             alternate_screen: false,
-            disable_alternate_screen: false,
             cursor_row: 0,
             screen_height: 0,
             screen_width: 0,
             screen: Screen::new(0, 0),
             output: None,
             clear_on_exit: true,
-            clear_on_start: true,
             mouse_enabled: false,
         }
     }
@@ -619,9 +603,6 @@ impl TermLock {
         term.max_height = options.max_height;
         term.min_height = options.min_height;
         term.clear_on_exit = options.clear_on_exit;
-        term.clear_on_start = options.clear_on_start;
-        term.screen.clear_on_start(options.clear_on_start);
-        term.disable_alternate_screen = options.disable_alternate_screen;
         term.mouse_enabled = options.mouse_enabled;
         term
     }
@@ -683,9 +664,7 @@ impl TermLock {
 
         // clear the screen
         let _ = output.cursor_goto(self.cursor_row, 0);
-        if self.clear_on_start {
-            let _ = output.erase_down();
-        }
+        let _ = output.erase_down();
 
         // clear the screen buffer
         self.screen.resize(width, height);
@@ -722,7 +701,7 @@ impl TermLock {
             output.show_cursor();
             if self.clear_on_exit || !exiting {
                 // clear drawn contents
-                if !self.disable_alternate_screen {
+                if self.alternate_screen {
                     output.quit_alternate_screen();
                 } else {
                     output.cursor_goto(self.cursor_row, 0);
@@ -767,9 +746,7 @@ impl TermLock {
             self.alternate_screen = true;
             self.bottom_intact = false;
             self.cursor_row = 0;
-            if !self.disable_alternate_screen {
-                output.enter_alternate_screen();
-            }
+            output.enter_alternate_screen();
         } else {
             // only use part of the screen
 

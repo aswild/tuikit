@@ -16,13 +16,7 @@ impl Draw for Model {
 impl Widget for Model {}
 
 fn main() {
-    let term: Term<()> = Term::with_options(
-        TermOptions::default()
-            .height(TermHeight::Percent(50))
-            .disable_alternate_screen(true)
-            .clear_on_start(false),
-    )
-    .unwrap();
+    let term: Term<()> = Term::with_height(TermHeight::Percent(50)).unwrap();
     let model = Model("Hey, I'm in middle!".to_string());
 
     while let Ok(ev) = term.poll_event() {
