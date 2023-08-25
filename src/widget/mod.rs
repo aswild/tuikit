@@ -13,17 +13,12 @@ mod util;
 mod win;
 
 /// Whether fixed size or percentage
-#[derive(Debug, Copy, Clone)]
+#[derive(Debug, Copy, Clone, Default)]
 pub enum Size {
     Fixed(usize),
     Percent(usize),
+    #[default]
     Default,
-}
-
-impl Default for Size {
-    fn default() -> Self {
-        Size::Default
-    }
 }
 
 impl Size {
@@ -55,10 +50,8 @@ impl Rectangle {
     pub fn contains(&self, row: usize, col: usize) -> bool {
         if row < self.top || row >= self.top + self.height {
             false
-        } else if col < self.left || col >= self.left + self.width {
-            false
         } else {
-            true
+            !(col < self.left || col >= self.left + self.width)
         }
     }
 

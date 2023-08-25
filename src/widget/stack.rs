@@ -202,7 +202,7 @@ mod test {
         };
         {
             let mut stack = Stack::new().top(&mut mutable);
-            let _ = stack.draw_mut(&mut canvas).unwrap();
+            stack.draw_mut(&mut canvas).unwrap();
         }
         assert_eq!(Called::Mut, *mutable.called.lock().unwrap());
 
@@ -210,7 +210,7 @@ mod test {
             called: Mutex::new(Called::No),
         };
         let stack = Stack::new().top(&immutable);
-        let _ = stack.draw(&mut canvas).unwrap();
+        stack.draw(&mut canvas).unwrap();
         assert_eq!(Called::Immut, *immutable.called.lock().unwrap());
     }
 }

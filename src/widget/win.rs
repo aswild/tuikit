@@ -344,16 +344,16 @@ impl<'a, Message> Win<'a, Message> {
         let border_bottom = self.border_bottom
             || (!self.title_on_top && (self.title.is_some() || self.right_prompt.is_some()));
 
-        if border_top || border_bottom {
-            if (height < 1) || (border_top && border_bottom && height < 2) {
-                return Err("not enough height for border".into());
-            }
+        if (border_top || border_bottom)
+            && ((height < 1) || (border_top && border_bottom && height < 2))
+        {
+            return Err("not enough height for border".into());
         }
 
-        if self.border_left || self.border_right {
-            if (width < 1) || (self.border_left && self.border_right && width < 2) {
-                return Err("not enough width for border".into());
-            }
+        if (self.border_left || self.border_right)
+            && ((width < 1) || (self.border_left && self.border_right && width < 2))
+        {
+            return Err("not enough width for border".into());
         }
 
         let top = if border_top { top + 1 } else { top };
@@ -415,16 +415,16 @@ impl<'a, Message> Win<'a, Message> {
             height,
         } = rect;
 
-        if self.border_top || self.border_bottom {
-            if (height < 1) || (self.border_top && self.border_bottom && height < 2) {
-                return Err("not enough height for border".into());
-            }
+        if (self.border_top || self.border_bottom)
+            && ((height < 1) || (self.border_top && self.border_bottom && height < 2))
+        {
+            return Err("not enough height for border".into());
         }
 
-        if self.border_left || self.border_right {
-            if (width < 1) || (self.border_left && self.border_right && width < 2) {
-                return Err("not enough width for border".into());
-            }
+        if (self.border_left || self.border_right)
+            && ((width < 1) || (self.border_left && self.border_right && width < 2))
+        {
+            return Err("not enough width for border".into());
         }
 
         let bottom = max(top + height, 1) - 1;
@@ -745,7 +745,7 @@ mod test {
         };
         {
             let mut win = Win::new(&mut mutable);
-            let _ = win.draw_mut(&mut canvas).unwrap();
+            win.draw_mut(&mut canvas).unwrap();
         }
         assert_eq!(Called::Mut, *mutable.called.lock().unwrap());
 
@@ -753,7 +753,7 @@ mod test {
             called: Mutex::new(Called::No),
         };
         let win = Win::new(&immutable);
-        let _ = win.draw(&mut canvas).unwrap();
+        win.draw(&mut canvas).unwrap();
         assert_eq!(Called::Immut, *immutable.called.lock().unwrap());
     }
 }

@@ -258,7 +258,9 @@ impl<UserEvent: Send + 'static> Term<UserEvent> {
 
         // wait for the components to stop
         // i.e. key_listener & size_change_listener
-        self.keyboard_handler.lock().take().map(|h| h.interrupt());
+        if let Some(h) = self.keyboard_handler.lock().take() {
+            h.interrupt()
+        }
         unregister_sigwinch(self.resize_signal_id.load(Ordering::Relaxed)).map(|tx| tx.send(()));
 
         termlock.pause(exiting)?;
@@ -310,7 +312,7 @@ impl<UserEvent: Send + 'static> Term<UserEvent> {
             components_to_stop.fetch_add(1, Ordering::SeqCst);
             debug!("size change listener started");
             loop {
-                if let Ok(_) = sigwinch_rx.recv() {
+                if sigwinch_rx.recv().is_ok() {
                     let event_tx = event_tx_clone.lock();
                     let _ = event_tx.send(Event::Resize {
                         width: 0,
@@ -413,7 +415,7 @@ impl<UserEvent: Send + 'static> Term<UserEvent> {
         event_rx
             .recv()
             .map(|ev| self.filter_event(ev))
-            .map_err(|err| TuikitError::ChannelReceiveError(err))
+            .map_err(TuikitError::ChannelReceiveError)
     }
 
     /// An interface to inject event to the terminal's event queue
@@ -435,7 +437,7 @@ impl<UserEvent: Send + 'static> Term<UserEvent> {
     pub fn term_size(&self) -> Result<(usize, usize)> {
         self.ensure_not_stopped()?;
         let termlock = self.term_lock.lock();
-        Ok(termlock.term_size()?)
+        termlock.term_size()
     }
 
     /// Clear internal buffer
@@ -507,13 +509,13 @@ impl<UserEvent: Send + 'static> Term<UserEvent> {
     }
 
     pub fn draw(&self, draw: &dyn Draw) -> Result<()> {
-        let mut canvas = TermCanvas { term: &self };
+        let mut canvas = TermCanvas { term: self };
         draw.draw(&mut canvas)
             .map_err(|err| TuikitError::DrawError(err))
     }
 
     pub fn draw_mut(&self, draw: &mut dyn Draw) -> Result<()> {
-        let mut canvas = TermCanvas { term: &self };
+        let mut canvas = TermCanvas { term: self };
         draw.draw_mut(&mut canvas)
             .map_err(|err| TuikitError::DrawError(err))
     }
@@ -663,8 +665,8 @@ impl TermLock {
         }
 
         // clear the screen
-        let _ = output.cursor_goto(self.cursor_row, 0);
-        let _ = output.erase_down();
+        output.cursor_goto(self.cursor_row, 0);
+        output.erase_down();
 
         // clear the screen buffer
         self.screen.resize(width, height);

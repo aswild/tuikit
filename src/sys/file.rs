@@ -20,7 +20,9 @@ pub fn wait_until_ready(fd: RawFd, signal_fd: Option<RawFd>, timeout: Duration) 
 
     let mut fdset = select::FdSet::new();
     fdset.insert(fd);
-    signal_fd.map(|fd| fdset.insert(fd));
+    if let Some(fd) = signal_fd {
+        fdset.insert(fd)
+    }
     let n = select::select(None, &mut fdset, None, None, &mut timeout_spec)?;
 
     if n < 1 {

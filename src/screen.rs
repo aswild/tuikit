@@ -71,7 +71,7 @@ impl Screen {
             let orig_end = min_width + orig_start;
             let start = row * width;
             let end = min_width + start;
-            (&mut new_cells[start..end]).copy_from_slice(&original[orig_start..orig_end]);
+            new_cells[start..end].copy_from_slice(&original[orig_start..orig_end]);
         }
         new_cells
     }
@@ -205,11 +205,11 @@ impl Screen {
     /// assert_eq!(None, iter.next());
     /// ```
     pub fn iter_cell(&self) -> CellIterator {
-        return CellIterator {
+        CellIterator {
             width: self.width,
             index: 0,
             vec: &self.cells,
-        };
+        }
     }
 }
 
@@ -279,21 +279,11 @@ impl<'a> Iterator for CellIterator<'a> {
     }
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, Default)]
 struct Cursor {
     pub row: usize,
     pub col: usize,
     visible: bool,
-}
-
-impl Default for Cursor {
-    fn default() -> Self {
-        Self {
-            row: 0,
-            col: 0,
-            visible: false,
-        }
-    }
 }
 
 #[cfg(test)]

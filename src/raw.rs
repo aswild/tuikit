@@ -80,7 +80,7 @@ impl<W: Write + AsRawFd> Write for RawTerminal<W> {
 
 impl<W: Write + AsRawFd> AsRawFd for RawTerminal<W> {
     fn as_raw_fd(&self) -> RawFd {
-        return self.output.as_raw_fd();
+        self.output.as_raw_fd()
     }
 }
 

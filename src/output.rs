@@ -64,7 +64,7 @@ impl Output {
 
     /// Write text (Terminal escape sequences will be removed/escaped.)
     pub fn write(&mut self, data: &str) {
-        self.buffer.extend(data.replace("\x1b", "?").as_bytes());
+        self.buffer.extend(data.replace('\x1b', "?").as_bytes());
     }
 
     /// Write raw texts to the terminal.
@@ -88,7 +88,7 @@ impl Output {
             return;
         }
 
-        let title = title.replace("\x1b", "").replace("\x07", "");
+        let title = title.replace(['\x1b', '\x07'], "");
         self.write_raw(format!("\x1b]2;{}\x07", title).as_bytes());
     }
 

@@ -5,8 +5,9 @@
 /// Color::RED; // predefined values
 /// Color::Rgb(255, 0, 0); // RED
 /// ```
-#[derive(Debug, Clone, Copy, PartialEq)]
+#[derive(Debug, Clone, Copy, PartialEq, Default)]
 pub enum Color {
+    #[default]
     Default,
     AnsiValue(u8),
     Rgb(u8, u8, u8),
@@ -32,10 +33,4 @@ impl Color {
     pub const LIGHT_MAGENTA: Color = Color::AnsiValue(13);
     pub const LIGHT_CYAN: Color = Color::AnsiValue(14);
     pub const LIGHT_WHITE: Color = Color::AnsiValue(15);
-}
-
-impl Default for Color {
-    fn default() -> Self {
-        Color::Default
-    }
 }

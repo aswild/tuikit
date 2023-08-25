@@ -651,18 +651,10 @@ mod test {
 
     impl<'a> Widget for WSplit<'a> {}
 
+    #[derive(Default)]
     struct SingleWindow {
         pub width: usize,
         pub height: usize,
-    }
-
-    impl Default for SingleWindow {
-        fn default() -> Self {
-            Self {
-                width: 0,
-                height: 0,
-            }
-        }
     }
 
     impl Draw for SingleWindow {
@@ -1286,7 +1278,7 @@ mod test {
         };
         {
             let mut hsplit = HSplit::default().split(&mut mutable);
-            let _ = hsplit.draw_mut(&mut canvas).unwrap();
+            hsplit.draw_mut(&mut canvas).unwrap();
         }
         assert_eq!(Called::Mut, *mutable.called.lock().unwrap());
 
@@ -1295,7 +1287,7 @@ mod test {
         };
         {
             let mut vsplit = VSplit::default().split(&mut mutable);
-            let _ = vsplit.draw_mut(&mut canvas).unwrap();
+            vsplit.draw_mut(&mut canvas).unwrap();
         }
         assert_eq!(Called::Mut, *mutable.called.lock().unwrap());
 
@@ -1303,13 +1295,13 @@ mod test {
             called: Mutex::new(Called::No),
         };
         let hsplit = HSplit::default().split(&immutable);
-        let _ = hsplit.draw(&mut canvas).unwrap();
+        hsplit.draw(&mut canvas).unwrap();
         assert_eq!(Called::Immut, *immutable.called.lock().unwrap());
         let immutable = Drawn {
             called: Mutex::new(Called::No),
         };
         let vsplit = VSplit::default().split(&immutable);
-        let _ = vsplit.draw(&mut canvas).unwrap();
+        vsplit.draw(&mut canvas).unwrap();
         assert_eq!(Called::Immut, *immutable.called.lock().unwrap());
     }
 }
