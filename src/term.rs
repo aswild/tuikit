@@ -195,10 +195,8 @@ impl<UserEvent: Send + 'static> Term<UserEvent> {
     ) -> Result<(usize, usize)> {
         output.ask_for_cpr();
 
-        if let Ok(key) = keyboard.next_key_timeout(WAIT_TIMEOUT) {
-            if let Key::CursorPos(row, col) = key {
-                return Ok((row as usize, col as usize));
-            }
+        if let Ok(Key::CursorPos(row, col)) = keyboard.next_key_timeout(WAIT_TIMEOUT) {
+            return Ok((row as usize, col as usize));
         }
 
         Ok((0, 0))
@@ -521,7 +519,7 @@ impl<UserEvent: Send + 'static> Term<UserEvent> {
     }
 }
 
-impl<'a, UserEvent: Send + 'static> Drop for Term<UserEvent> {
+impl<UserEvent: Send + 'static> Drop for Term<UserEvent> {
     fn drop(&mut self) {
         let _ = self.pause_internal(true);
     }
@@ -699,7 +697,7 @@ impl TermLock {
     /// Pause the terminal
     fn pause(&mut self, exiting: bool) -> Result<()> {
         self.disable_mouse()?;
-        self.output.take().map(|mut output| {
+        if let Some(mut output) = self.output.take() {
             output.show_cursor();
             if self.clear_on_exit || !exiting {
                 // clear drawn contents
@@ -716,7 +714,7 @@ impl TermLock {
                 }
             }
             output.flush();
-        });
+        }
         Ok(())
     }
 

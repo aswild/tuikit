@@ -1,8 +1,10 @@
-///! A canvas is a trait defining the draw actions
+//! A canvas is a trait defining the draw actions
+
+use unicode_width::UnicodeWidthChar;
+
 use crate::attr::Attr;
 use crate::cell::Cell;
 use crate::Result;
-use unicode_width::UnicodeWidthChar;
 
 pub trait Canvas {
     /// Get the canvas size (width, height)

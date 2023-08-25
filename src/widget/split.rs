@@ -1,3 +1,5 @@
+use std::cmp::{min, Ordering};
+
 use super::util::adjust_event;
 use super::Size;
 use super::{Rectangle, Widget};
@@ -5,7 +7,6 @@ use crate::canvas::{BoundedCanvas, Canvas};
 use crate::draw::Draw;
 use crate::draw::DrawResult;
 use crate::event::Event;
-use std::cmp::min;
 
 /// A Split item would contain 3 things
 /// 0. inner_size, will be used if `basis` is `Size::Default`.
@@ -104,12 +105,10 @@ trait SplitContainer<'a, Message = ()> {
 
         let target_total_size: usize = split_sizes.iter().sum();
 
-        let op = if target_total_size == actual_size {
-            Op::Noop
-        } else if target_total_size < actual_size {
-            Op::Grow
-        } else {
-            Op::Shrink
+        let op = match target_total_size.cmp(&actual_size) {
+            Ordering::Equal => Op::Noop,
+            Ordering::Less => Op::Grow,
+            Ordering::Greater => Op::Shrink,
         };
 
         let size_diff = match op {

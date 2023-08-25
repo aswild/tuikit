@@ -1,11 +1,15 @@
+//! Various pre-defined widget that implements Draw
+
+use std::cmp::min;
+
+use crate::draw::Draw;
+use crate::event::Event;
+
 pub use self::align::*;
-///! Various pre-defined widget that implements Draw
 pub use self::split::*;
 pub use self::stack::*;
 pub use self::win::*;
-use crate::draw::Draw;
-use crate::event::Event;
-use std::cmp::min;
+
 mod align;
 mod split;
 mod stack;

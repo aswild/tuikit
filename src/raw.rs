@@ -13,11 +13,8 @@
 //! use tuikit::raw::IntoRawMode;
 //! use std::io::{Write, stdout};
 //!
-//! fn main() {
-//!     let mut stdout = stdout().into_raw_mode().unwrap();
-//!
-//!     write!(stdout, "Hey there.").unwrap();
-//! }
+//! let mut stdout = stdout().into_raw_mode().unwrap();
+//! write!(stdout, "Hey there.").unwrap();
 //! ```
 
 use std::io::{self, Write};

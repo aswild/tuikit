@@ -4,6 +4,7 @@
 /// Single key
 #[rustfmt::skip]
 #[derive(Eq, PartialEq, Hash, Debug, Copy, Clone)]
+#[non_exhaustive]
 pub enum Key {
     Null,
     ESC,
@@ -43,10 +44,6 @@ pub enum Key {
 
     BracketedPasteStart,
     BracketedPasteEnd,
-
-    #[doc(hidden)]
-    __Nonexhaustive,
-
 }
 
 /// A mouse button.

@@ -6,14 +6,12 @@
 /// Color::Rgb(255, 0, 0); // RED
 /// ```
 #[derive(Debug, Clone, Copy, PartialEq, Default)]
+#[non_exhaustive]
 pub enum Color {
     #[default]
     Default,
     AnsiValue(u8),
     Rgb(u8, u8, u8),
-
-    #[doc(hidden)]
-    __Nonexhaustive,
 }
 
 impl Color {

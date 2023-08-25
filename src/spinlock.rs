@@ -1,4 +1,5 @@
-///! SpinLock implemented using AtomicBool
+//! SpinLock implemented using AtomicBool
+
 use std::cell::UnsafeCell;
 use std::ops::Deref;
 use std::ops::DerefMut;

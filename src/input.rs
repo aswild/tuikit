@@ -467,28 +467,29 @@ impl KeyBoard {
 
     fn parse_cursor_report(&mut self) -> Result<Key> {
         self.read_unread_bytes();
-        let pos_semi = self.byte_buf.iter().position(|&b| b == b';');
-        let pos_r = self.byte_buf.iter().position(|&b| b == b'R');
+        let pos_semi = self
+            .byte_buf
+            .iter()
+            .position(|&b| b == b';')
+            .ok_or(TuikitError::NoCursorReportResponse)?;
+        let pos_r = self
+            .byte_buf
+            .iter()
+            .position(|&b| b == b'R')
+            .ok_or(TuikitError::NoCursorReportResponse)?;
 
-        if pos_semi.is_some() && pos_r.is_some() {
-            let pos_semi = pos_semi.unwrap();
-            let pos_r = pos_r.unwrap();
+        let remain = self.byte_buf.split_off(pos_r + 1);
+        let mut col_str = self.byte_buf.split_off(pos_semi + 1);
+        let mut row_str = std::mem::replace(&mut self.byte_buf, remain);
 
-            let remain = self.byte_buf.split_off(pos_r + 1);
-            let mut col_str = self.byte_buf.split_off(pos_semi + 1);
-            let mut row_str = std::mem::replace(&mut self.byte_buf, remain);
+        row_str.pop(); // remove the ';' character
+        col_str.pop(); // remove the 'R' character
+        let row = String::from_utf8(row_str)?;
+        let col = String::from_utf8(col_str)?;
 
-            row_str.pop(); // remove the ';' character
-            col_str.pop(); // remove the 'R' character
-            let row = String::from_utf8(row_str)?;
-            let col = String::from_utf8(col_str)?;
-
-            let row_num = row.parse::<u16>()?;
-            let col_num = col.parse::<u16>()?;
-            Ok(CursorPos(row_num - 1, col_num - 1))
-        } else {
-            Err(TuikitError::NoCursorReportResponse)
-        }
+        let row_num = row.parse::<u16>()?;
+        let col_num = col.parse::<u16>()?;
+        Ok(CursorPos(row_num - 1, col_num - 1))
     }
 
     fn extended_escape(&mut self, seq2: u8) -> Result<Key> {

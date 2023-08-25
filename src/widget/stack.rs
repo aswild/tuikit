@@ -8,9 +8,16 @@ pub struct Stack<'a, Message = ()> {
     inner: Vec<Box<dyn Widget<Message> + 'a>>,
 }
 
+impl<Message> Default for Stack<'_, Message> {
+    fn default() -> Self {
+        Self { inner: Vec::new() }
+    }
+}
+
 impl<'a, Message> Stack<'a, Message> {
+    #[inline]
     pub fn new() -> Self {
-        Self { inner: vec![] }
+        Self::default()
     }
 
     pub fn top(mut self, widget: impl Widget<Message> + 'a) -> Self {

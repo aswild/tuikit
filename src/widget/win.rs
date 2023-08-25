@@ -1,3 +1,6 @@
+use std::cmp::max;
+use unicode_width::UnicodeWidthStr;
+
 use super::split::Split;
 use super::util::adjust_event;
 use super::Size;
@@ -9,12 +12,10 @@ use crate::draw::{Draw, DrawResult};
 use crate::event::Event;
 use crate::widget::align::{AlignSelf, HorizontalAlign};
 use crate::{ok_or_return, some_or_return};
-use std::cmp::max;
-use unicode_width::UnicodeWidthStr;
 
 type FnDrawHeader = dyn Fn(&mut dyn Canvas) -> DrawResult<()>;
 
-///! A Win is like a div in HTML, it has its margin/padding, and border
+/// A Win is like a div in HTML, it has its margin/padding, and border
 pub struct Win<'a, Message = ()> {
     margin_top: Size,
     margin_right: Size,
@@ -515,7 +516,7 @@ impl<'a, Message> Win<'a, Message> {
 
     fn draw_header(&self, canvas: &mut dyn Canvas) -> DrawResult<()> {
         let (width, height) = canvas.size()?;
-        if width <= 0 || height <= 0 {
+        if width == 0 || height == 0 {
             return Ok(());
         }
 
