@@ -499,14 +499,14 @@ impl<'a, Message> Win<'a, Message> {
 
         if self.right_prompt.is_some() {
             let prompt = self.right_prompt.as_ref().unwrap();
-            let text_width = prompt.width_cjk();
+            let text_width = prompt.width();
             let left = HorizontalAlign::Right.adjust(0, width, text_width);
             canvas.print_with_attr(row, left, prompt, self.right_prompt_attr)?;
         }
 
         if self.title.is_some() {
             let title = self.title.as_ref().unwrap();
-            let text_width = title.width_cjk();
+            let text_width = title.width();
             let left = self.title_align.adjust(0, width, text_width);
             canvas.print_with_attr(row, left, title, self.right_prompt_attr)?;
         }
