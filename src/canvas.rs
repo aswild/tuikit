@@ -33,6 +33,7 @@ pub trait Canvas {
     /// print `content` starting with position `(row, col)` with `attr`
     /// - canvas should NOT wrap to y+1 if the content is too long
     /// - canvas should handle wide characters
+    ///
     /// return the printed width of the content
     fn print_with_attr(
         &mut self,

@@ -508,14 +508,12 @@ impl<UserEvent: Send + 'static> Term<UserEvent> {
 
     pub fn draw(&self, draw: &dyn Draw) -> Result<()> {
         let mut canvas = TermCanvas { term: self };
-        draw.draw(&mut canvas)
-            .map_err(|err| TuikitError::DrawError(err))
+        draw.draw(&mut canvas).map_err(TuikitError::DrawError)
     }
 
     pub fn draw_mut(&self, draw: &mut dyn Draw) -> Result<()> {
         let mut canvas = TermCanvas { term: self };
-        draw.draw_mut(&mut canvas)
-            .map_err(|err| TuikitError::DrawError(err))
+        draw.draw_mut(&mut canvas).map_err(TuikitError::DrawError)
     }
 }
 
