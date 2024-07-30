@@ -77,12 +77,7 @@ mod sys;
 pub mod term;
 pub mod widget;
 
-// Homemade spinlock implementation
-#[cfg(feature = "spinlock")]
-mod spinlock;
-
 // Wrap std::sync::Mutex to provide the same API
-#[cfg(not(feature = "spinlock"))]
 mod spinlock {
     use std::sync::{Mutex, MutexGuard};
 
